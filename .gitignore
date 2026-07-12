@@ -1,0 +1,60 @@
+# Ignore arquivos binários e de build
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.appx
+*.appxsym
+
+# Arquivos de configuração gerados automaticamente
+*.user
+*.suo
+*.vsp
+*.vspx
+*.vspscc
+*.vssscc
+*.log
+*.cache
+
+# Diretórios específicos do Visual Studio
+.vs/
+TestResults/
+Backup*/
+Thumbs.db
+
+# Configurações de IDEs
+.idea/
+*.csproj.user
+*.sln.docstates
+
+# Dependências e pacotes do NuGet
+packages/
+*.nupkg
+project.lock.json
+project.assets.json
+
+# Arquivos do Rider e Resharper
+*.sln.iml
+*.DotSettings
+resharper/
+
+# Logs e arquivos temporários
+logs/
+*.tlog
+*.tmp
+*.bak
+*.swp
+
+# Configurações do Docker (se aplicável)
+.dockerignore
+docker-compose.override.yml
+
+# Certificados de desenvolvimento (se aplicável)
+*.pfx
+*.p12
+
+# Configurações de ambiente (se houver)
+appsettings.*.json
+secrets.json
+.env

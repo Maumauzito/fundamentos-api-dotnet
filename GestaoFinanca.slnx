@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Fiap.GestaoFinanca.Application/Fiap.GestaoFinanca.Application.csproj" Id="0d748940-8bc1-42e1-bd14-9e8cdbd2e102" />
+  <Project Path="Fiap.GestaoFinanca.Domain/Fiap.GestaoFinanca.Domain.csproj" />
+  <Project Path="GestaoFinanca/Fiap.GestaoFinanca.Api.csproj" />
+</Solution>
