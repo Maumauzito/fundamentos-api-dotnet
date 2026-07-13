@@ -1,7 +1,7 @@
-using Fiap.GestaoFinanca.Application.Interfaces;
-using Fiap.GestaoFinanca.Application.Services;
-using System.Text.Json.Serialization;
+using Fiap.GestaoFinanca.Api.Endpoints;
+using Fiap.GestaoFinanca.Api.Extensions;
 using Fiap.GestaoFinanca.Application.DependencyInjection;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +32,9 @@ if (app.Environment.IsDevelopment())
 // Redireciona requisições HTTP para HTTPS.
 app.UseHttpsRedirection();
 
+
+app.UseApiMiddlewares();
+
 app.MapGet("/api/status",() => 
 {
     return Results.Ok(new
@@ -46,7 +49,17 @@ app.MapGet("/api/status",() =>
 // Prepara o middleware de autorização.
 app.UseAuthorization();
 
+app.MapdespesaEndpoints();
+
 // Mapeia os controllers como endpoints HTTP.
 app.MapControllers();
+
+
+app.MapGet("/api/teste-erro", () =>
+ {
+     throw new Exception("Erro de teste para o middleware de tratamento de exceções.");
+ });
+
+
 
 app.Run();
