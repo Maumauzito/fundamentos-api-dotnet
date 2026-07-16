@@ -41,5 +41,11 @@
             FormaPagamento = formaPagamento;
         }
 
+        private Despesa()
+        {
+            Descricao = string.Empty;
+            Categoria = string.Empty;
+            FormaPagamento = string.Empty;
+        }
     }
 }

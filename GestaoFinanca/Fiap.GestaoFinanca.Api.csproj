@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Fiap.GestaoFinanca.Application\Fiap.GestaoFinanca.Application.csproj" />
+    <ProjectReference Include="..\Fiap.GestaoFinanca.Infrastructure\Fiap.GestaoFinanca.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

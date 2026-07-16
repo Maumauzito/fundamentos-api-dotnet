@@ -4,8 +4,10 @@ namespace Fiap.GestaoFinanca.Application.Interfaces
 {
     public interface IDespesaService
     {
-        IReadOnlyCollection<DespesaResponse> Listar();
-        DespesaResponse? ObterPorId(Guid id);
-        DespesaResponse Criar(DespesaRequest request);
+        Task<IReadOnlyCollection<DespesaResponse>> ListarAsync();
+        Task<DespesaResponse?> ObterPorIdAsync(Guid id);
+        Task<DespesaResponse> CriarAsync(DespesaRequest request);
+        Task<bool> AtualizarAsync(Guid id, AtualizarDespesaRequest request);
+        Task<bool> ExcluirAsync(Guid id);
     }
 }

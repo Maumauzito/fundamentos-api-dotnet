@@ -38,10 +38,10 @@ namespace Fiap.GestaoFinanca.Api.Controllers
 
         
         [HttpPost]
-        public IActionResult Criar([FromBody] DespesaRequest request)
+        public async Task<IActionResult> Criar([FromBody] DespesaRequest request)
         {
 
-            var response = _despesaService.Criar(request);
+            var response = await _despesaService.CriarAsync(request);
 
             return Created($"api/despesas/{response.Id}", response);
 

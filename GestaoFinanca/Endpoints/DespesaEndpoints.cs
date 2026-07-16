@@ -15,14 +15,14 @@ namespace Fiap.GestaoFinanca.Api.Endpoints
             
             group.MapGet("/", (IDespesaService despesaService) =>
             {
-                var despesas = despesaService.Listar();
+                var despesas = despesaService.ListarAsync();
                 return Results.Ok(despesas);
             })
             .WithName("ListarDespesasMinimal");
 
-            group.MapGet("/{id:guid}", (Guid id, IDespesaService despesaService) => 
+            group.MapGet("/{id:guid}", async (Guid id, IDespesaService despesaService) => 
             {
-                var despesas = despesaService.ObterPorId(id);
+                var despesas = await despesaService.ObterPorIdAsync(id);
                 
                 return despesas is null
                     ? Results.NotFound(new {Mensagem = "despesa não encontrada." })
@@ -33,7 +33,7 @@ namespace Fiap.GestaoFinanca.Api.Endpoints
             
             group.MapPost("/",(DespesaRequest request, IDespesaService despesaService) =>
             {
-                var response = despesaService.Criar(request);
+                var response = despesaService.CriarAsync(request);
                 return Results.Created($"/api/despesa-minimal/{response.Id}", response);
             } )
                 .WithName("CriarDespesaMinimal");
