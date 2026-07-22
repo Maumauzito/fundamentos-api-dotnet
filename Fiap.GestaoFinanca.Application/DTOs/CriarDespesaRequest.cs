@@ -7,5 +7,4 @@
         DateTime Data,
         string Categoria,
         string FormaPagamento);
-
 }

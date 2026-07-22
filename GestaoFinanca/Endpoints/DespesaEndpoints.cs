@@ -13,12 +13,16 @@ namespace Fiap.GestaoFinanca.Api.Endpoints
 
             
             
-            group.MapGet("/", (IDespesaService despesaService) =>
+            group.MapGet("/", async  (IDespesaService despesaService) =>
             {
-                var despesas = despesaService.ListarAsync();
+                var despesas =  await despesaService.ListarAsync();
                 return Results.Ok(despesas);
             })
-            .WithName("ListarDespesasMinimal");
+            .WithName("ListarDespesasMinimal")
+            .WithSummary("Lista de todas as despesas")
+            .WithDescription("Retorna dados de despesas cadastradas no SQL SERVER")
+            .Produces<IEnumerable<DespesaResponse>>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status500InternalServerError);
 
             group.MapGet("/{id:guid}", async (Guid id, IDespesaService despesaService) => 
             {
@@ -28,15 +32,25 @@ namespace Fiap.GestaoFinanca.Api.Endpoints
                     ? Results.NotFound(new {Mensagem = "despesa não encontrada." })
                     : Results.Ok(despesas);
             })
-                .WithName("ObterDespesaPorIdMinimal");
-        
-            
-            group.MapPost("/",(DespesaRequest request, IDespesaService despesaService) =>
+                .WithName("ObterDespesaPorIdMinimal")
+                .WithSummary("Busca uma despesa especifica com base em um ID")
+                .WithDescription("Retorna dados de despesas especifica com base em um identificador unico")
+                .Produces<IEnumerable<DespesaResponse>>(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status404NotFound)
+                .Produces(StatusCodes.Status500InternalServerError);
+
+
+            group.MapPost("/", async (DespesaRequest request, IDespesaService despesaService) =>
             {
-                var response = despesaService.CriarAsync(request);
+                var response = await despesaService.CriarAsync(request);
                 return Results.Created($"/api/despesa-minimal/{response.Id}", response);
             } )
-                .WithName("CriarDespesaMinimal");
+                .WithName("CriarDespesaMinimal")
+                .WithSummary("Criação de despesa")
+                .WithDescription("Recebe os dados de uma despesa e realiza o cadastro em banco de Dados")
+                .Produces<IEnumerable<DespesaResponse>>(StatusCodes.Status201Created)
+                .Produces(StatusCodes.Status404NotFound)
+                .Produces(StatusCodes.Status500InternalServerError);
 
             return group;
 

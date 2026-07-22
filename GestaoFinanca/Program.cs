@@ -31,7 +31,7 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API para gerenciamento de despesas e receitas.",
         Contact = new OpenApiContact
         {
-            Name = "Equipe de Academica",
+            Name = "Equipe Academica",
             Email = "contato@fiap.com.br"
         }
     });
