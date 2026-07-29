@@ -7,8 +7,10 @@ namespace Fiap.GestaoFinanca.Api.Extensions
 
         public static IApplicationBuilder UseApiMiddlewares(this IApplicationBuilder app)
         {
-            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseMiddleware<CorrelationIdMiddleware>();
+            app.UseMiddleware<RequestLoggingMiddleware>();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+            
 
             return app;
         }

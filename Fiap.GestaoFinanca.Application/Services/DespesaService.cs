@@ -3,6 +3,7 @@ using Fiap.GestaoFinanca.Application.Interfaces;
 using Fiap.GestaoFinanca.Application.Mappings;
 using Fiap.GestaoFinanca.Application.Respositories;
 using Fiap.GestaoFinanca.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace Fiap.GestaoFinanca.Application.Services
 {
@@ -10,16 +11,22 @@ namespace Fiap.GestaoFinanca.Application.Services
     {
 
         private readonly IDespesaRepository _despesaRepository;
+        private readonly ILogger<DespesaService> _logger;
 
-        public DespesaService(IDespesaRepository despesaRepository)
+        public DespesaService(IDespesaRepository despesaRepository, ILogger<DespesaService> logger)
         {
             _despesaRepository = despesaRepository;
+            _logger = logger;
         }
 
         public async Task<IReadOnlyCollection<DespesaResponse>> ListarAsync()
         {
 
+            _logger.LogInformation("Iniciando listagem de despesas");
+
             var despesas = await _despesaRepository.ListarAsync();
+
+            _logger.LogInformation("Finalizando listagem de despesas");
 
             return despesas
                     .Select(despesa => despesa.ToResponse())
@@ -36,6 +43,14 @@ namespace Fiap.GestaoFinanca.Application.Services
 
         public async Task<DespesaResponse> CriarAsync(DespesaRequest request)
         {
+
+            _logger.LogInformation(
+                    "Iniciando criação de despesa. Descricao: {Descricao}, Valor: {Valor}, Categoria: {Categoria}",
+                    request.Descricao,
+                    request.Valor,
+                    request.Categoria);
+
+
             var despesa = new Despesa(
                 request.Descricao,
                 request.Valor,
@@ -45,6 +60,8 @@ namespace Fiap.GestaoFinanca.Application.Services
                 );
 
             await _despesaRepository.AdcionarAsync(despesa);
+
+            _logger.LogInformation("Despesa criada com sucesso. Id: {DespesaId}", despesa.Id);
 
             return despesa.ToResponse();
 

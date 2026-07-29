@@ -1,9 +1,13 @@
 using Fiap.GestaoFinanca.Api.Endpoints;
 using Fiap.GestaoFinanca.Api.Extensions;
 using Fiap.GestaoFinanca.Application.DependencyInjection;
-using System.Text.Json.Serialization;
+using Fiap.GestaoFinanca.Infrastructure.Authentication;
 using Fiap.GestaoFinanca.Infrastructure.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +21,33 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
+
+var jwtSettings = builder.Configuration
+    .GetSection("JwtSettings")
+    .Get<JwtSettings>() ?? throw new InvalidOperationException("JwtSettings não encontradao");
+
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -35,6 +65,24 @@ builder.Services.AddSwaggerGen(options =>
             Email = "contato@fiap.com.br"
         }
     });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Informe o token JWT no formato: Bearer {seu_token}"
+    });
+
+    options.AddSecurityRequirement(document =>
+    new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+    });
+
+
 });
 
 
@@ -51,6 +99,9 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = "swagger"; // Define a raiz do Swagger UI como a rota padrão
     });
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Redireciona requisições HTTP para HTTPS.
 app.UseHttpsRedirection();
@@ -76,11 +127,12 @@ app.MapGet("/", () => Results.Ok(
         Aplicacao = "Gestão Financeira",
         Versao = "1.0.0",
         Documentacao = "/swagger",
-    }));
+    })).RequireAuthorization();
 
 // Prepara o middleware de autorização.
 app.UseAuthorization();
 
+app.MapAuthEndpoints();
 app.MapdespesaEndpoints();
 
 // Mapeia os controllers como endpoints HTTP.

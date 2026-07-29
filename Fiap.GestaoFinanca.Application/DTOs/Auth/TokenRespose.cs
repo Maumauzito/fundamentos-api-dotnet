@@ -1,8 +1,9 @@
 ﻿namespace Fiap.GestaoFinanca.Application.DTOs.Auth
 {
-public record TokenResponse(
-    string Token,
-    string TokenType,
-    DateTime Expiration
-    );
+    public sealed record TokenResponse
+    {
+        public string Token { get; init; } = string.Empty;
+        public string TokenType { get; init; } = string.Empty;
+        public DateTime Expiration { get; init; }
+    }
 }

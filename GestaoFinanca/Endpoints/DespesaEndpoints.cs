@@ -13,8 +13,14 @@ namespace Fiap.GestaoFinanca.Api.Endpoints
 
             
             
-            group.MapGet("/", async  (IDespesaService despesaService) =>
+            group.MapGet("/", async  (IDespesaService despesaService, ILoggerFactory loggerFactory) =>
             {
+
+                var logger = loggerFactory.CreateLogger("DespesaEndpoint");
+
+                logger.LogInformation("Endpoint de listagem de despesas acionado");
+                logger.LogDebug("Só aparece em DEBUG");
+
                 var despesas =  await despesaService.ListarAsync();
                 return Results.Ok(despesas);
             })

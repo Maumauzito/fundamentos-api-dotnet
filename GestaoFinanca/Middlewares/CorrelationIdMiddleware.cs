@@ -1,9 +1,11 @@
-﻿namespace Fiap.GestaoFinanca.Api.Middlewares
+﻿using Fiap.GestaoFinanca.Api.Constants;
+
+namespace Fiap.GestaoFinanca.Api.Middlewares
 {
     public sealed class CorrelationIdMiddleware
     {
 
-        private const string CorrelationIdHeader = "X-Correlation-ID";
+       // private const string CorrelationIdHeader = "X-Correlation-ID";
 
         private readonly RequestDelegate _next;
         private readonly ILogger<CorrelationIdMiddleware> _logger;
@@ -17,13 +19,15 @@
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var corrationId = ObterOuCriarCorralationId(context);
+            var correlationId = ObterOuCriarCorralationId(context);
 
-            context.Response.Headers[CorrelationIdHeader] = corrationId;
+            //context.Response.Headers[CorrelationIdHeader] = corrationId;
+
+            context.Response.Headers.TryAdd(HttpHeaderNames.CorrelationId, correlationId);
 
             using (_logger.BeginScope(new Dictionary<string, object>
             {
-                ["CorrelationId"] = corrationId
+                ["CorrelationId"] = correlationId
             }
             ))
             {
@@ -43,10 +47,10 @@
 
         private static string ObterOuCriarCorralationId(HttpContext context)
         {
-            if (context.Request.Headers.TryGetValue(CorrelationIdHeader, out var corralationId )
-                && !string.IsNullOrWhiteSpace(corralationId))
+            if (context.Request.Headers.TryGetValue(HttpHeaderNames.CorrelationId, out var correlationId)
+                && !string.IsNullOrWhiteSpace(correlationId))
             {
-                return corralationId.ToString();
+                return correlationId.ToString();
             }
 
             return Guid.NewGuid().ToString();
