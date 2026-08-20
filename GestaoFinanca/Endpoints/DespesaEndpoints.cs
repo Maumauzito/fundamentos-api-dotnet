@@ -9,7 +9,8 @@ namespace Fiap.GestaoFinanca.Api.Endpoints
         {
             
             var group = app.MapGroup("/api/despesa-minimal")
-                .WithTags("Despesas - Minimal API");
+                .WithTags("Despesas - Minimal API")
+                .RequireAuthorization();
 
             
             
@@ -26,7 +27,7 @@ namespace Fiap.GestaoFinanca.Api.Endpoints
             })
             .WithName("ListarDespesasMinimal")
             .WithSummary("Lista de todas as despesas")
-            .WithDescription("Retorna dados de despesas cadastradas no SQL SERVER")
+            .WithDescription("Retorna dados de despesas cadastradas no SQL SERVER ou npo chache da aplicação")
             .Produces<IEnumerable<DespesaResponse>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status500InternalServerError);
 
@@ -53,7 +54,7 @@ namespace Fiap.GestaoFinanca.Api.Endpoints
             } )
                 .WithName("CriarDespesaMinimal")
                 .WithSummary("Criação de despesa")
-                .WithDescription("Recebe os dados de uma despesa e realiza o cadastro em banco de Dados")
+                .WithDescription("Recebe os dados de uma despesa e realiza o cadastro em banco de Dados e invalida o cache")
                 .Produces<IEnumerable<DespesaResponse>>(StatusCodes.Status201Created)
                 .Produces(StatusCodes.Status404NotFound)
                 .Produces(StatusCodes.Status500InternalServerError);

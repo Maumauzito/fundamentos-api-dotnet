@@ -3,6 +3,7 @@ using Fiap.GestaoFinanca.Application.Respositories;
 using Fiap.GestaoFinanca.Infrastructure.Authentication;
 using Fiap.GestaoFinanca.Infrastructure.Data;
 using Fiap.GestaoFinanca.Infrastructure.Respositories;
+using Fiap.GestaoFinanca.Infrastructure.Simulations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +21,7 @@ namespace Fiap.GestaoFinanca.Infrastructure.DependencyInjection
             services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
             services.AddScoped<IDespesaRepository, DespesaRepository>();
             services.AddScoped<ITokenService, JwtTokenService>();
+            services.AddScoped<DataBaseInstabilitySimulator>();
 
             return services;
         }

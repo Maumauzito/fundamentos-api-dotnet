@@ -2,6 +2,9 @@
 using Fiap.GestaoFinanca.Application.Respositories;
 using Fiap.GestaoFinanca.Domain.Entities;
 using Fiap.GestaoFinanca.Infrastructure.Data;
+using Fiap.GestaoFinanca.Infrastructure.Resilience;
+using Fiap.GestaoFinanca.Infrastructure.Simulations;
+using Microsoft.Extensions.Logging;
 
 
 namespace Fiap.GestaoFinanca.Infrastructure.Respositories
@@ -9,15 +12,22 @@ namespace Fiap.GestaoFinanca.Infrastructure.Respositories
     public class DespesaRepository : IDespesaRepository
     {
         private readonly ISqlConnectionFactory _connectionFactory;
+        private readonly ILogger<DespesaRepository> _logger;
+        private readonly DataBaseInstabilitySimulator _dataBaseInstabilitySimulator;
 
-        public DespesaRepository(ISqlConnectionFactory connectionFactory)
+        public DespesaRepository(ISqlConnectionFactory connectionFactory,
+                                ILogger<DespesaRepository> logger,
+                                DataBaseInstabilitySimulator dataBaseInstabilitySimulator)
         {
             _connectionFactory = connectionFactory;
+            _logger = logger;
+            _dataBaseInstabilitySimulator = dataBaseInstabilitySimulator;
         }
 
 
         public async Task<IReadOnlyCollection<Despesa>> ListarAsync()
         {
+
             const string sql = """
                 SELECT Id, 
                     Descricao, 
@@ -30,10 +40,22 @@ namespace Fiap.GestaoFinanca.Infrastructure.Respositories
                 ORDER BY Data DESC
                 """;
 
-            using var connetion = _connectionFactory.CreateConnection();
-            var despesas = await connetion.QueryAsync<Despesa>(sql);
 
-            return despesas.ToList();
+            var policy = DataBaseResiliencePolicy.CreateCombinePolicy(_logger);
+
+            return await policy.ExecuteAsync(async () => 
+            {
+
+                _logger.LogInformation("========= Consultando despesas no banco.==========");
+
+
+                using var connetion = _connectionFactory.CreateConnection();
+                var despesas = await connetion.QueryAsync<Despesa>(sql);
+
+                return despesas.ToList();
+
+            });
+
         }
 
         public async Task<Despesa?> ObterPorIdAsync(Guid id)

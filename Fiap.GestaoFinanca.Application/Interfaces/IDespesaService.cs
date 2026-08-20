@@ -9,5 +9,6 @@ namespace Fiap.GestaoFinanca.Application.Interfaces
         Task<DespesaResponse> CriarAsync(DespesaRequest request);
         Task<bool> AtualizarAsync(Guid id, AtualizarDespesaRequest request);
         Task<bool> ExcluirAsync(Guid id);
+        Task<ResumoDespesas> ObterResumoAsync(string id);
     }
 }

@@ -1,5 +1,8 @@
 using Fiap.GestaoFinanca.Api.Endpoints;
 using Fiap.GestaoFinanca.Api.Extensions;
+using Fiap.GestaoFinanca.Api.GraphQL.Mutations;
+using Fiap.GestaoFinanca.Api.GraphQL.Queries;
+using Fiap.GestaoFinanca.Api.GrpcServices;
 using Fiap.GestaoFinanca.Application.DependencyInjection;
 using Fiap.GestaoFinanca.Infrastructure.Authentication;
 using Fiap.GestaoFinanca.Infrastructure.DependencyInjection;
@@ -8,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Text;
 using System.Text.Json.Serialization;
+using Fiap.GestaoFinanca.Api.GraphQL.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +26,17 @@ builder.Services.AddControllers()
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddGrpc();
+
+builder.Services.AddGraphQLServer()
+    .AddQueryType<DespesaQuery>()
+    .AddMutationType<DespesaMutation>()
+    .AddType<DespesaType>();
+
+builder.Services.AddMemoryCache();
+
+
 
 var jwtSettings = builder.Configuration
     .GetSection("JwtSettings")
@@ -132,8 +147,13 @@ app.MapGet("/", () => Results.Ok(
 // Prepara o middleware de autorização.
 app.UseAuthorization();
 
+app.MapGrpcService<DespesaGrpcServices>();
+
+app.MapGraphQL("/graphql");
+
 app.MapAuthEndpoints();
 app.MapdespesaEndpoints();
+app.MapResilienceEndpoints();
 
 // Mapeia os controllers como endpoints HTTP.
 app.MapControllers();

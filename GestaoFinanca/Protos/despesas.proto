@@ -1,0 +1,19 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "GestaoFinanca.API.Protos";
+
+package despesas;
+
+service DespesasGrpc {
+  rpc ObterResumoDespesas (ResumoDespesasRequest) returns (ResumoDespesasResponse);
+}
+
+message ResumoDespesasRequest {
+  string usuarioId = 1;
+}
+
+message ResumoDespesasResponse {
+  int32 quantidade = 1;
+  double valorTotal = 2;
+  string mensagem = 3;
+}

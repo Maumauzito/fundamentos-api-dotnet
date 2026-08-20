@@ -7,11 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.35.1" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.83.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.83.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="HotChocolate.AspNetCore" Version="16.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <Protobuf Include="Protos\despesas.proto" GrpcServices="Server" />
+  </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\Fiap.GestaoFinanca.Application\Fiap.GestaoFinanca.Application.csproj" />
     <ProjectReference Include="..\Fiap.GestaoFinanca.Infrastructure\Fiap.GestaoFinanca.Infrastructure.csproj" />
